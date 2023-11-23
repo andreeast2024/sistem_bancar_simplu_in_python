@@ -1,0 +1,79 @@
+#Sistem bancar in python
+
+class ContBancar:
+    def __init__(self, numar_cont, detinator, sold):
+        self.numar_cont = numar_cont
+        self.detinator = detinator
+        self.sold = sold
+
+    def depunere(self, suma):
+        if suma > 0:
+            self.sold += suma
+            return f"{suma} RON au fost depusi cu succes pe contul {self.numar_cont}. Soldul curent: {self.sold} RON."
+        else:
+            return "Suma trebuie sa fie pozitiva."
+
+    def retragere(self, suma):
+        if suma > 0:
+            if suma <= self.sold:
+                self.sold -= suma
+                return f"{suma} RON au fost retrasi cu succes de pe contul {self.numar_cont}. Sold curent: {self.sold} RON."
+            else:
+                return "Fonduri insuficiente."
+        else:
+            return "Suma trebuie sa fie pozitiva."
+
+    def sold_disponibil(self):
+        return f"Soldul curent al contului {self.numar_cont} este {self.sold} RON."
+
+
+class Banca:
+    def __init__(self, nume_banca):
+        self.nume_banca = nume_banca
+        self.conturi = {}
+
+    def adauga_cont(self, cont):
+        self.conturi[cont.numar_cont] = cont
+
+    def afiseaza_conturi(self):
+        for numar_cont, cont in self.conturi.items():
+            print(f"Contul {numar_cont}: {cont.detinator}")
+
+    def efectueaza_transfer(self, numar_cont_sursa, numar_cont_destinatie, suma):
+        if numar_cont_sursa in self.conturi and numar_cont_destinatie in self.conturi:
+            cont_sursa = self.conturi[numar_cont_sursa]
+            cont_destinatie = self.conturi[numar_cont_destinatie]
+
+            rezultat_retragere = cont_sursa.retragere(suma)
+            rezultat_depunere = cont_destinatie.depunere(suma)
+
+            return f"Transfer de {suma} RON efectuat cu succes. {rezultat_retragere} {rezultat_depunere}"
+        else:
+            return "Conturi invalide."
+
+
+# Folosire aplicatie
+cont1 = ContBancar("123456", "John Doe", 0)
+cont2 = ContBancar("654321", "Jane Doe", 0)
+
+banca = Banca("Banca Exemplu")
+
+banca.adauga_cont(cont1)
+banca.adauga_cont(cont2)
+
+banca.afiseaza_conturi()
+
+print(cont1.depunere(100))
+print(cont1.depunere(500))
+print(cont2.depunere(400))
+
+print(cont1.retragere(200))
+print(cont2.retragere(1000))
+
+print(cont1.sold_disponibil())
+print(cont2.sold_disponibil())
+
+print(banca.efectueaza_transfer("123456", "654321", 50))
+
+print(cont1.sold_disponibil())
+print(cont2.sold_disponibil())
